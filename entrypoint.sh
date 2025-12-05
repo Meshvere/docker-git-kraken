@@ -3,6 +3,15 @@ set -e
 
 echo "=== Début du script d'entrypoint ==="
 
+echo "=== Copier la clé SSH ==="
+cp -R /ssh/* ~/.ssh/
+chown -R root:root ~/.ssh/*
+chmod -R 700 ~/.ssh/*
+
+ls -lh ~/.ssh/
+
+ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa'
+
 echo "=== Configuration Git ==="
 git config --global user.name "${GIT_NAME}"
 git config --global user.email "${GIT_MAIL}"
@@ -14,6 +23,21 @@ mkdir -p /root/.vnc
 x11vnc -storepasswd "${VNC_PASSWORD}" /root/.vnc/passwd
 chmod 600 /root/.vnc/passwd
 echo "Mot de passe VNC configuré (longueur: $(wc -c < /root/.vnc/passwd) octets)"
+
+echo "=== Configuration Openbox pour plein écran ==="
+mkdir -p /root/.config/openbox
+cat > /root/.config/openbox/rc.xml << 'OPENBOX_EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <applications>
+    <application name="gitkraken" class="GitKraken">
+      <maximized>yes</maximized>
+      <fullscreen>yes</fullscreen>
+    </application>
+  </applications>
+</openbox_config>
+OPENBOX_EOF
+echo "Configuration Openbox créée"
 
 echo "=== Création de la configuration Supervisor ==="
 cat > /etc/supervisor/supervisord.conf << EOF
@@ -62,7 +86,7 @@ stdout_logfile=/var/log/supervisor/novnc.log
 stderr_logfile=/var/log/supervisor/novnc.err
 
 [program:gitkraken]
-command=/usr/bin/gitkraken --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer
+command=/bin/bash -c "sleep 2 && /usr/bin/gitkraken --no-sandbox --disable-gpu --disable-dev-shm-usage --disable-software-rasterizer --start-maximized"
 environment=DISPLAY=":0",HOME="/root"
 autorestart=true
 priority=500

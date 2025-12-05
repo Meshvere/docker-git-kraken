@@ -1,5 +1,19 @@
 FROM debian:12
 
+# Installation des locales françaises
+RUN apt-get update && \
+    apt-get install -y locales && \
+    sed -i '/fr_FR.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen fr_FR.UTF-8 && \
+    update-locale LANG=fr_FR.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configuration des locales françaises
+ENV LANG=fr_FR.UTF-8 \
+    LANGUAGE=fr_FR:fr \
+    LC_ALL=fr_FR.UTF-8 \
+    TZ=Europe/Paris
+
 # Installation des dépendances
 RUN apt-get update && \
     apt-get install -y \
@@ -15,7 +29,14 @@ RUN apt-get update && \
     libgbm1 \
     libasound2 \
     libgtk-3-0 \
+    fonts-liberation \
+    fonts-dejavu \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
+
+# Configuration du fuseau horaire
+RUN ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime && \
+    echo "Europe/Paris" > /etc/timezone
 
 # Téléchargement et installation de GitKraken
 RUN wget https://release.gitkraken.com/linux/gitkraken-amd64.deb -O /tmp/gitkraken.deb && \
@@ -29,7 +50,7 @@ RUN mkdir -p /root/.vnc /var/log/supervisor
 
 # Copie du script d'entrée
 COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+RUN chmod u+x /*.sh
 
 # Variables d'environnement par défaut
 ENV DISPLAY=:0 \

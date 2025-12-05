@@ -10,14 +10,14 @@ services:
         volumes:
             - ./supervisord.conf:/etc/supervisor/supervisord.conf
             - ./datas:/root/.gitkraken
-            - ./repos:/workspace
-            - ./.ssh:/root/.ssh:ro
+            - ./../:/workspace
+            - ./../.ssh:/ssh:ro
         shm_size: '4gb'
         security_opt:
             - seccomp:unconfined
         cap_add:
             - SYS_ADMIN
-#        entrypoint: [ "/bin/bash", "-c" ]
+        entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
 #        command:
 #            - |
 #               if [ ! -f /usr/bin/gitkraken ]; then

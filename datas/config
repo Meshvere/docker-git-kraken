@@ -1,0 +1,51 @@
+{
+  "lastUpgradeScriptRun": "v11.6.0",
+  "appId": "2437f34ad87aeb0ffe75c92b783eb7bd0a5a5f3d",
+  "appLocale": "en-US",
+  "appDateFormat": null,
+  "appDateTimeFormat": null,
+  "appDateWordFormat": null,
+  "appDateVerboseFormat": null,
+  "userMilestones": {
+    "installId": "e2a18f57-04f4-45f1-bb83-255d73f7bba4",
+    "installDate": 1764887558148,
+    "firstAppOpen": true
+  },
+  "sslWhitelist": [],
+  "webConfig": {
+    "lastUpdatedAt": "2025-12-05T08:55:47.635Z",
+    "config": {
+      "callouts": [],
+      "promos": [
+        {
+          "key": "CYBERWEEK25",
+          "code": "CYBERWEEK25",
+          "startsOn": "2025-11-23T23:59:00.000Z",
+          "expiresOn": "2025-12-06T09:59:00.000Z",
+          "content": {
+            "promoBadgeMarkdown": "**Cyber Week Sale!**\n\nSave 50% on GitKraken Pro.",
+            "proPromoLabelSmall": "SAVE 50% for a limited time!",
+            "toolbarLinkLabelOverride": "Save 50% on Pro"
+          }
+        }
+      ]
+    },
+    "dismissedCallouts": {}
+  },
+  "lastReleaseNotesDisplayed": "11.6.0",
+  "ui": {
+    "shouldShowStartupPromoModal": false
+  },
+  "aliases": {
+    "repo": {},
+    "tabs": {}
+  },
+  "windowSettings": {
+    "x": 448,
+    "y": 140,
+    "width": 1024,
+    "height": 800,
+    "fullScreen": false,
+    "maximized": false
+  }
+}

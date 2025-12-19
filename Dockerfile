@@ -1,5 +1,23 @@
 FROM debian:12
 
+ARG CURRENT_UID=1000
+ARG CURRENT_GID=1000
+ARG CURRENT_USER=smanetagis
+
+# Créer le groupe et l'utilisateur avec les mêmes UID/GID que sur l'hôte
+# RUN #groupadd -g "${CURRENT_GID}" "${CURRENT_USER}" && \
+#    useradd -m -u "${CURRENT_UID}" -g "${CURRENT_GID}" -s /bin/bash "${CURRENT_USER}"
+RUN groupadd -g "1000" "smanetagis" && \
+    useradd -m -u "1000" -g "1000" -s /bin/bash "smanetagis" -d /home/smanetagis
+
+RUN mkdir -p /home/smanetagis/.ssh && \
+    chmod -R 700 /home/smanetagis/.ssh && \
+    chown -R 1000:1000 /home/smanetagis/.ssh
+
+# Optionnel : donner les droits sudo si nécessaire
+ RUN apt-get update && apt-get install -y sudo && \
+     echo "${CURRENT_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 # Installation des locales françaises
 RUN apt-get update && \
     apt-get install -y locales && \
@@ -46,21 +64,30 @@ RUN wget https://release.gitkraken.com/linux/gitkraken-amd64.deb -O /tmp/gitkrak
     rm -rf /var/lib/apt/lists/*
 
 # Création des dossiers nécessaires
-RUN mkdir -p /root/.vnc /var/log/supervisor
+RUN mkdir -p ~/.vnc /var/log/supervisor && \
+   chown -R smanetagis:smanetagis /var/log/supervisor
 
 # Copie du script d'entrée
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod u+x /*.sh
 
 # Variables d'environnement par défaut
-ENV DISPLAY=:0 \
-    VNC_PASSWORD=changeme \
-    RESOLUTION=1920x1080 \
-    GIT_NAME="Your Name" \
-    GIT_MAIL="your@email.com"
+#ENV DISPLAY=:0 \
+#    VNC_PASSWORD=changeme \
+#    RESOLUTION=1920x1080 \
+#    GIT_NAME="Your Name" \
+#    GIT_MAIL="your@email.com" \
+#    USER="root" \
+#    GROUP="root"
+
+#ARG USERNAME=smanetagis
+#ARG USER_UID=1000
+#ARG USER_GID=1000
 
 # Exposition des ports
 EXPOSE 5900 6080
+
+WORKDIR /home/smanetagis
 
 # Point d'entrée
 ENTRYPOINT ["/entrypoint.sh"]

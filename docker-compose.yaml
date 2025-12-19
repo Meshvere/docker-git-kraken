@@ -1,50 +1,33 @@
 services:
     gitkraken:
+        container_name: gitkraken-vnc
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: gitkraken-vnc
+            args:
+                USERNAME: ${CURRENT_USER:-smanetagis}
+                USER_UID: ${CURRENT_UID:-1000}
+                USER_GID: ${CURRENT_GID:-1000}
+#        user: "${CURRENT_UID:-1000}:${CURRENT_GID:-1000}"
+        environment:
+            - HOME=/home/${CURRENT_USER}
+            - DISPLAY=:99
+            - USERNAME=${CURRENT_USER:-smanetagis}
+            - USER_UID=${CURRENT_UID:-1000}
+            - USER_GID=${CURRENT_GID:-1000}
+        volumes:
+            - ./supervisord.conf:/etc/supervisor/supervisord.conf
+            - ./gitkraken-config:/home/${CURRENT_USER}/.config/GitKraken
+            - ./gitkraken-data:/home/${CURRENT_USER}/.gitkraken
+            - ./../:/home/${CURRENT_USER}/workspace
+#            - ./datas:/home/${CURRENT_USER}/.gitkraken
+            - ./../.ssh:/ssh:ro
         ports:
             - "6080:6080"  # noVNC (accès web)
             - "5900:5900"  # VNC direct (optionnel)
-        volumes:
-            - ./supervisord.conf:/etc/supervisor/supervisord.conf
-            - ./datas:/root/.gitkraken
-            - ./../:/workspace
-            - ./../.ssh:/ssh:ro
-        shm_size: '4gb'
+        shm_size: '2gb'
         security_opt:
             - seccomp:unconfined
         cap_add:
             - SYS_ADMIN
         entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
-#        command:
-#            - |
-#               if [ ! -f /usr/bin/gitkraken ]; then
-#                    echo 'Installation des paquets...'
-#                    apt-get update
-#                    apt-get install -y wget curl git xvfb x11vnc novnc websockify supervisor openbox libgbm1 libasound2 libgtk-3-0 gettext-base
-#                    echo 'Téléchargement GitKraken...'
-#                    wget https://release.gitkraken.com/linux/gitkraken-amd64.deb -O /tmp/gitkraken.deb
-#                    echo 'Installation GitKraken...'
-#                    apt-get install -y /tmp/gitkraken.deb
-#                    rm /tmp/gitkraken.deb || true
-#                    echo 'Installation terminée'
-#                else
-#                echo 'GitKraken déjà installé'
-#                fi
-#
-#                git config --global user.name "${GIT_NAME}" || true
-#                git config --global user.email "${GIT_MAIL}" || true
-#
-#                mkdir -p /root/.vnc /var/log/supervisor
-#
-#                echo "${VNC_PASSWORD}" | x11vnc -storepasswd - /root/.vnc/passwd
-#
-#                echo "VNC_PASSWORD: ${VNC_PASSWORD}"
-#                echo "GIT_NAME: ${GIT_NAME}"
-#                echo "GIT_MAIL: ${GIT_MAIL}"
-#                echo "RESOLUTION: ${RESOLUTION}"
-#
-#                echo '=== Démarrage Supervisor ==='
-#                exec /usr/bin/supervisord -c /etc/supervisor/supervisord.conf

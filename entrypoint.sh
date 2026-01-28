@@ -92,6 +92,8 @@ environment=DISPLAY=":0",HOME="/home/smanetagis",DBUS_SESSION_BUS_ADDRESS="unix:
 autorestart=true
 priority=30
 startsecs=10
+startretries=999
+exitcodes=0,2
 stdout_logfile=/dev/fd/1
 stdout_logfile_maxbytes=0
 redirect_stderr=true

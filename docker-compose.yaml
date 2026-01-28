@@ -11,7 +11,7 @@ services:
 #        user: "${CURRENT_UID:-1000}:${CURRENT_GID:-1000}"
         environment:
             - HOME=/home/${CURRENT_USER}
-            - DISPLAY=:99
+            - DISPLAY=:0
             - USERNAME=${CURRENT_USER:-smanetagis}
             - USER_UID=${CURRENT_UID:-1000}
             - USER_GID=${CURRENT_GID:-1000}

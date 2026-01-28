@@ -42,8 +42,10 @@ RUN apt-get update && \
     wget \
     curl \
     git \
-    xvfb \
-    x11vnc \
+    tigervnc-standalone-server \
+    tigervnc-common \
+    xserver-xorg-core \
+    xserver-xorg-video-dummy \
     supervisor \
     openbox \
     libgbm1 \
@@ -52,6 +54,7 @@ RUN apt-get update && \
     fonts-liberation \
     fonts-dejavu \
     tzdata \
+    wmctrl \
     && rm -rf /var/lib/apt/lists/*
 
 # Configuration du fuseau horaire

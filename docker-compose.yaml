@@ -20,11 +20,9 @@ services:
             - ./gitkraken-config:/home/${CURRENT_USER}/.config/GitKraken
             - ./gitkraken-data:/home/${CURRENT_USER}/.gitkraken
             - ./../:/home/${CURRENT_USER}/workspace
-#            - ./datas:/home/${CURRENT_USER}/.gitkraken
             - ./../.ssh:/ssh:ro
         ports:
-            - "6080:6080"  # noVNC (accès web)
-            - "5900:5900"  # VNC direct (optionnel)
+            - "5900:5900"  # VNC direct
         shm_size: '2gb'
         security_opt:
             - seccomp:unconfined

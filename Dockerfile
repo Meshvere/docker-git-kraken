@@ -44,8 +44,6 @@ RUN apt-get update && \
     git \
     xvfb \
     x11vnc \
-    novnc \
-    websockify \
     supervisor \
     openbox \
     libgbm1 \
@@ -75,21 +73,8 @@ RUN mkdir -p ~/.vnc /var/log/supervisor && \
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod u+x /*.sh
 
-# Variables d'environnement par défaut
-#ENV DISPLAY=:0 \
-#    VNC_PASSWORD=changeme \
-#    RESOLUTION=1920x1080 \
-#    GIT_NAME="Your Name" \
-#    GIT_MAIL="your@email.com" \
-#    USER="root" \
-#    GROUP="root"
-
-#ARG USERNAME=smanetagis
-#ARG USER_UID=1000
-#ARG USER_GID=1000
-
 # Exposition des ports
-EXPOSE 5900 6080
+EXPOSE 5900
 
 WORKDIR /home/${CURRENT_USER}
 

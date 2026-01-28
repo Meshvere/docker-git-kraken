@@ -15,7 +15,12 @@ cp -R /ssh/* ~/.ssh/
 chown -R root:root ~/.ssh/*
 chmod -R 700 ~/.ssh/*
 
+cp -R /ssh/* /home/smanetagis/.ssh/
+chown -R smanetagis:smanetagis /home/smanetagis/.ssh/*
+chmod -R 700 /home/smanetagis/.ssh/*
+
 ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa'
+ssh-agent bash -c 'ssh-add /home/smanetagis/.ssh/id_rsa'
 
 echo "=== Configuration Git ==="
 git config --global user.name "${GIT_NAME}"
@@ -37,7 +42,7 @@ cat > ~/.config/openbox/rc.xml << 'OPENBOX_EOF'
   <applications>
     <application name="gitkraken" class="GitKraken">
       <maximized>yes</maximized>
-      <fullscreen>yes</fullscreen>
+      <fullscreen>no</fullscreen>
     </application>
   </applications>
 </openbox_config>

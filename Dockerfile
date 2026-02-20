@@ -2,7 +2,7 @@ FROM debian:12
 
 ARG CURRENT_UID=1000
 ARG CURRENT_GID=1000
-ARG CURRENT_USER=smanetagis
+ARG CURRENT_USER=moi
 
 # Créer le groupe et l'utilisateur avec les mêmes UID/GID que sur l'hôte
 # RUN #groupadd -g "${CURRENT_GID}" "${CURRENT_USER}" && \

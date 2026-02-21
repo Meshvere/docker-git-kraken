@@ -91,5 +91,7 @@ datas/repos/*
 !.env.template
 gitkraken-config/*
 !gitkraken-config/.gitignore
+!gitkraken-config/.gitkeep
 gitkraken-data/*
 !gitkraken-data/.gitignore
+!gitkraken-data/.gitkeep

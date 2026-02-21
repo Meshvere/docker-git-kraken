@@ -1,0 +1,31 @@
+services:
+    gitkraken:
+        container_name: gitkraken-vnc
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                USERNAME: ${CURRENT_USER:-moi}
+                USER_UID: ${CURRENT_UID:-1000}
+                USER_GID: ${CURRENT_GID:-1000}
+        environment:
+            - HOME=/home/${CURRENT_USER}
+            - DISPLAY=:0
+            - USERNAME=${CURRENT_USER:-moi}
+            - USER_UID=${CURRENT_UID:-1000}
+            - USER_GID=${CURRENT_GID:-1000}
+            - RESOLUTION=${RESOLUTION:-1900x950}
+        volumes:
+            - ./supervisord.conf:/etc/supervisor/supervisord.conf
+            - ./gitkraken-config:/home/${CURRENT_USER}/.config/GitKraken
+            - ./gitkraken-data:/home/${CURRENT_USER}/.gitkraken
+            - ./../:/home/${CURRENT_USER}/workspace
+            - ./../.ssh:/ssh:ro
+        ports:
+            - "5900:5900"  # VNC direct
+        shm_size: '2gb'
+        security_opt:
+            - seccomp:unconfined
+        cap_add:
+            - SYS_ADMIN
+        entrypoint: [ "/bin/bash", "/entrypoint.sh" ]

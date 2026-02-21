@@ -1,0 +1,86 @@
+FROM debian:12
+
+ARG CURRENT_UID=1000
+ARG CURRENT_GID=1000
+ARG USERNAME=moi
+
+# Créer le groupe et l'utilisateur avec les mêmes UID/GID que sur l'hôte
+# RUN #groupadd -g "${CURRENT_GID}" "${USERNAME}" && \
+#    useradd -m -u "${CURRENT_UID}" -g "${CURRENT_GID}" -s /bin/bash "${USERNAME}"
+RUN groupadd -g "1000" "${USERNAME}" && \
+    useradd -m -u "1000" -g "1000" -s /bin/bash "${USERNAME}" -d /home/${USERNAME}
+
+RUN mkdir -p /home/${USERNAME}/.ssh && \
+    chmod -R 700 /home/${USERNAME}/.ssh && \
+    chown -R 1000:1000 /home/${USERNAME}/.ssh
+
+RUN mkdir -p /root/.ssh && \
+    chmod -R 700 /root/.ssh && \
+    chown -R root:root /root/.ssh
+
+# Optionnel : donner les droits sudo si nécessaire
+ RUN apt-get update && apt-get install -y sudo && \
+     echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Installation des locales françaises
+RUN apt-get update && \
+    apt-get install -y locales && \
+    sed -i '/fr_FR.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen fr_FR.UTF-8 && \
+    update-locale LANG=fr_FR.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Configuration des locales françaises
+ENV LANG=fr_FR.UTF-8 \
+    LANGUAGE=fr_FR:fr \
+    LC_ALL=fr_FR.UTF-8 \
+    TZ=Europe/Paris
+
+# Installation des dépendances
+RUN apt-get update && \
+    apt-get install -y \
+    wget \
+    curl \
+    git \
+    tigervnc-standalone-server \
+    tigervnc-common \
+    xserver-xorg-core \
+    xserver-xorg-video-dummy \
+    supervisor \
+    openbox \
+    libgbm1 \
+    libasound2 \
+    libgtk-3-0 \
+    fonts-liberation \
+    fonts-dejavu \
+    tzdata \
+    wmctrl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configuration du fuseau horaire
+RUN ln -sf /usr/share/zoneinfo/Europe/Paris /etc/localtime && \
+    echo "Europe/Paris" > /etc/timezone
+
+# Téléchargement et installation de GitKraken
+RUN wget https://release.gitkraken.com/linux/gitkraken-amd64.deb -O /tmp/gitkraken.deb && \
+    apt-get update && \
+    apt-get install -y /tmp/gitkraken.deb && \
+    rm /tmp/gitkraken.deb && \
+    rm -rf /var/lib/apt/lists/*
+
+# Création des dossiers nécessaires
+RUN mkdir -p ~/.vnc /var/log/supervisor && \
+   chown -R ${USERNAME}:${USERNAME} /var/log/supervisor
+
+# Copie du script d'entrée
+COPY entrypoint.sh /entrypoint.sh
+COPY .env /.env
+RUN chmod u+x /*.sh
+
+# Exposition des ports
+EXPOSE 5900
+
+WORKDIR /home/${USERNAME}
+
+# Point d'entrée
+ENTRYPOINT ["/entrypoint.sh"]

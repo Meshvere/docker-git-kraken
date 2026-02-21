@@ -5,16 +5,16 @@ services:
             context: .
             dockerfile: Dockerfile
             args:
-                USERNAME: ${CURRENT_USER:-smanetagis}
+                USERNAME: ${CURRENT_USER:-moi}
                 USER_UID: ${CURRENT_UID:-1000}
                 USER_GID: ${CURRENT_GID:-1000}
-#        user: "${CURRENT_UID:-1000}:${CURRENT_GID:-1000}"
         environment:
             - HOME=/home/${CURRENT_USER}
             - DISPLAY=:0
-            - USERNAME=${CURRENT_USER:-smanetagis}
+            - USERNAME=${CURRENT_USER:-moi}
             - USER_UID=${CURRENT_UID:-1000}
             - USER_GID=${CURRENT_GID:-1000}
+            - RESOLUTION=${RESOLUTION:-1900x950}
         volumes:
             - ./supervisord.conf:/etc/supervisor/supervisord.conf
             - ./gitkraken-config:/home/${CURRENT_USER}/.config/GitKraken
